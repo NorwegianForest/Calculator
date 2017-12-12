@@ -1,3 +1,3 @@
 # Calculator
-Java GUI
+Java GUI<br>
 ![](/img/Frame.jpg)
