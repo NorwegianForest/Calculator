@@ -8,6 +8,7 @@ package com.code;
  */
 public class Number extends MyStack {
     private boolean isNegative = false;
+    private boolean isResult = false;
 
     Number(String str){
         super(str);
@@ -21,24 +22,30 @@ public class Number extends MyStack {
      */
     @Override
     public void push(String str) {
-        if (str.equals(".")) {
-            if (stack.search(".") == -1) {
+        if (isResult) {
+            setSingle(str);
+            isResult = false;
+        } else {
+            if (str.equals(".")) {
+                if (stack.search(".") == -1) {
+                    stack.push(str);
+                }
+            } else if (str.equals("±")) {
+                if (isNegative) {
+                    this.leftPop();
+                    isNegative = false;
+                } else {
+                    this.leftPush("-");
+                    isNegative = true;
+                }
+            } else {
+                if (this.isSingle() && stack.peek().toString().equals("0")) {
+                    stack.pop();
+                }
                 stack.push(str);
             }
-        } else if (str.equals("±")) {
-            if (isNegative) {
-                this.leftPop();
-                isNegative = false;
-            } else {
-                this.leftPush("-");
-                isNegative = true;
-            }
-        } else {
-            if (this.isSingle() && stack.peek().toString().equals("0")) {
-                stack.pop();
-            }
-            stack.push(str);
         }
+
     }
 
     /**
@@ -53,5 +60,14 @@ public class Number extends MyStack {
         } else {
             stack.pop();
         }
+    }
+
+    /**
+     * 结果幅值方法，清空堆栈，并压入该参数，在标记此值为结果
+     * @param str 压入堆栈的字符串
+     */
+    public void setResult(String str) {
+        setSingle(str);
+        isResult = true;
     }
 }
