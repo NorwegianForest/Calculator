@@ -106,7 +106,7 @@ public class MainFrame extends JFrame implements ActionListener, KeyListener {
             formula.push(number.getJoin());
         }
         FormulaCal c = new FormulaCal(formula.getJoin());
-        number.setSingle(c.getResult());
+        number.setResult(c.getResult());
         String historyStr = formula.getJoin() + " = " + number.getJoin();
         numberLabel.setText(number.getJoin());
         formula.init();
