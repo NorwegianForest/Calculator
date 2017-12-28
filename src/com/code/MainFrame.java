@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import static javax.swing.SwingConstants.RIGHT;
 
@@ -13,7 +15,7 @@ import static javax.swing.SwingConstants.RIGHT;
  * @author NorwegianForest
  * @version 1.0
  */
-public class MainFrame extends JFrame implements ActionListener{
+public class MainFrame extends JFrame implements ActionListener, KeyListener {
     private JPanel leftPanel, rightPanel;
     private JPanel dispPanel, keyPanel;
     private JPanel historyPanel;
@@ -47,6 +49,7 @@ public class MainFrame extends JFrame implements ActionListener{
             keyButton[i] = new JButton(buttonStr[i]);
             keyButton[i].setFont(new Font("Maalgun Gothic", 1, 25));
             keyButton[i].addActionListener(this);
+            keyButton[i].addKeyListener(this);
             keyPanel.add(keyButton[i++]);
         }
 
@@ -83,103 +86,135 @@ public class MainFrame extends JFrame implements ActionListener{
         this.setVisible(true);
     }
 
+    private void pushAndSetNumber(String num) {
+        number.push(num);
+        numberLabel.setText(number.getJoin());
+    }
+
+    private void pushAndSetOperator(String operator) {
+        if (!"(".equals(operator)) {
+            formula.push(number.getJoin());
+        }
+        formula.push(operator);
+        formulaLabel.setText(formula.getJoin());
+        number.init();
+        numberLabel.setText(number.getJoin());
+    }
+
+    private void enterAndEqual() {
+        if (!formula.peek().equals(")")) {
+            formula.push(number.getJoin());
+        }
+        FormulaCal c = new FormulaCal(formula.getJoin());
+        number.setSingle(c.getResult());
+        String historyStr = formula.getJoin() + " = " + number.getJoin();
+        numberLabel.setText(number.getJoin());
+        formula.init();
+        formulaLabel.setText(formula.getJoin());
+
+        formula.setHistory(historyStr);
+        for (int i = 1; i <= formula.getLength(); i ++) {
+            historyLabel[i].setText(formula.getHistoryTop());
+        }
+        formula.back();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e){
        if (e.getSource() == keyButton[8]) {
-            number.push("7");
-            numberLabel.setText(number.getJoin());
+           pushAndSetNumber("7");
        } else if (e.getSource() == keyButton[9]) {
-           number.push("8");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("8");
        } else if (e.getSource() == keyButton[10]) {
-           number.push("9");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("9");
        } else if (e.getSource() == keyButton[12]) {
-           number.push("4");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("4");
        } else if (e.getSource() == keyButton[13]) {
-           number.push("5");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("5");
        } else if (e.getSource() == keyButton[14]) {
-           number.push("6");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("6");
        } else if (e.getSource() == keyButton[16]) {
-           number.push("1");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("1");
        } else if (e.getSource() == keyButton[17]) {
-           number.push("2");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("2");
        } else if (e.getSource() == keyButton[18]) {
-           number.push("3");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("3");
        } else if (e.getSource() == keyButton[20]) {
-           number.push("±");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("±");
        } else if (e.getSource() == keyButton[21]) {
-           number.push("0");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber("0");
        } else if (e.getSource() == keyButton[22]) {
-           number.push(".");
-           numberLabel.setText(number.getJoin());
+           pushAndSetNumber(".");
        } else if (e.getSource() == keyButton[6]) {
            number.backSpace();
            numberLabel.setText(number.getJoin());
        } else if (e.getSource() == keyButton[19]) {
-           formula.push(number.getJoin());
-           formula.push("+");
-           formulaLabel.setText(formula.getJoin());
-           number.init();
-           numberLabel.setText(number.getJoin());
+           pushAndSetOperator("+");
        } else if (e.getSource() == keyButton[15]) {
-           formula.push(number.getJoin());
-           formula.push("-");
-           formulaLabel.setText(formula.getJoin());
-           number.init();
-           numberLabel.setText(number.getJoin());
+           pushAndSetOperator("-");
        } else if (e.getSource() == keyButton[11]) {
-           formula.push(number.getJoin());
-           formula.push("*");
-           formulaLabel.setText(formula.getJoin());
-           number.init();
-           numberLabel.setText(number.getJoin());
+           pushAndSetOperator("*");
        } else if (e.getSource() == keyButton[7]) {
-           formula.push(number.getJoin());
-           formula.push("/");
-           formulaLabel.setText(formula.getJoin());
-           number.init();
-           numberLabel.setText(number.getJoin());
+           pushAndSetOperator("/");
        } else if (e.getSource() == keyButton[0]) {
-           formula.push("(");
-           formulaLabel.setText(formula.getJoin());
-           number.init();
-           numberLabel.setText(number.getJoin());
+           pushAndSetOperator("(");
        } else if (e.getSource() == keyButton[1]) {
-           formula.push(number.getJoin());
-           formula.push(")");
-           formulaLabel.setText(formula.getJoin());
-           number.init();
-           numberLabel.setText(number.getJoin());
+           pushAndSetOperator(")");
        } else if (e.getSource() == keyButton[23]) {
-           if (!formula.peek().equals(")")) {
-               formula.push(number.getJoin());
-           }
-           FormulaCal c = new FormulaCal(formula.getJoin());
-           number.setSingle(c.getResult());
-           String historyStr = formula.getJoin() + " = " + number.getJoin();
-           numberLabel.setText(number.getJoin());
-           formula.init();
-           formulaLabel.setText(formula.getJoin());
-
-           formula.setHistory(historyStr);
-           for (int i = 1; i <= formula.getLength(); i ++) {
-               historyLabel[i].setText(formula.getHistoryTop());
-           }
-           formula.back();
+           enterAndEqual();
        } else if (e.getSource() == keyButton[5]) {
            number.init();
            formula.init();
            numberLabel.setText(number.getJoin());
            formulaLabel.setText(formula.getJoin());
        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_NUMPAD0 || e.getKeyCode() == KeyEvent.VK_0) {
+            pushAndSetNumber("0");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD1 || e.getKeyCode() == KeyEvent.VK_1) {
+            pushAndSetNumber("1");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD2 || e.getKeyCode() == KeyEvent.VK_2) {
+            pushAndSetNumber("2");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD3 || e.getKeyCode() == KeyEvent.VK_3) {
+            pushAndSetNumber("3");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD4 || e.getKeyCode() == KeyEvent.VK_4) {
+            pushAndSetNumber("4");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD5 || e.getKeyCode() == KeyEvent.VK_5) {
+            pushAndSetNumber("5");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD6 || e.getKeyCode() == KeyEvent.VK_6) {
+            pushAndSetNumber("6");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD7 || e.getKeyCode() == KeyEvent.VK_7) {
+            pushAndSetNumber("7");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD8 || e.getKeyCode() == KeyEvent.VK_8) {
+            pushAndSetNumber("8");
+        } else if (e.getKeyCode() == KeyEvent.VK_NUMPAD9 || e.getKeyCode() == KeyEvent.VK_9) {
+            pushAndSetNumber("9");
+        } else if (e.getKeyCode() == KeyEvent.VK_ADD) {
+            pushAndSetOperator("+");
+        } else if (e.getKeyCode() == KeyEvent.VK_MINUS || e.getKeyCode() == KeyEvent.VK_SUBTRACT) {
+            pushAndSetOperator("-");
+        } else if (e.getKeyCode() == KeyEvent.VK_MULTIPLY) {
+            pushAndSetOperator("*");
+        } else if (e.getKeyCode() == KeyEvent.VK_SLASH || e.getKeyCode() == KeyEvent.VK_DIVIDE) {
+            pushAndSetOperator("/");
+        } else if (e.getKeyCode() == KeyEvent.VK_PERIOD || e.getKeyCode() == KeyEvent.VK_DECIMAL) {
+            pushAndSetNumber(".");
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            enterAndEqual();
+        } else {
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
